@@ -1,6 +1,6 @@
 import aws_cdk as core
 import aws_cdk.assertions as assertions
-
+import pytest
 from cdk_fargate_deploy.cdk_fargate_deploy_stack import CdkFargateDeployStack
 
 # example tests. To run these tests, uncomment this file along with the example
