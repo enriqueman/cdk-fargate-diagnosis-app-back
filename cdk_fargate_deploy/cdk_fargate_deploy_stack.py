@@ -1,5 +1,6 @@
 from aws_cdk import (
     # Duration,
+    Duration,
     Stack,
     # aws_sqs as sqs,
 )
@@ -41,8 +42,8 @@ class CdkFargateDeployStack(Stack):
         service.target_group.configure_health_check(
             port="traffic-port",
             path="/",
-            interval=30,
-            timeout=5,
+            interval=Duration.seconds(30), 
+            timeout=Duration.seconds(5),
             healthy_threshold_count=5,
             unhealthy_threshold_count=2,
             healthy_http_codes="200"
