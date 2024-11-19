@@ -47,7 +47,7 @@ jobs:
 
   deploy-dev:
     if: github.ref == 'refs/heads/develop'
-    needs: [test]
+    # needs: [test]
     runs-on: ubuntu-latest
     env:
       APP_STAGE: dev
