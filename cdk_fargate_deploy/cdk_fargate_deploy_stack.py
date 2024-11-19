@@ -42,7 +42,7 @@ class CdkFargateDeployStack(Stack):
             path="/",
             interval=30,
             timeout=5,
-            HealthyThresholdCount=5,
-            UnhealthyThresholdCount=2,
+            healthy_threshold_count=5,
+            unhealthy_threshold_count=2,
             healthy_http_codes="200"
         )
