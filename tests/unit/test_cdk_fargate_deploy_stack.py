@@ -1,17 +1,15 @@
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 import pytest
+from aws_cdk import Duration
 from cdk_fargate_deploy.cdk_fargate_deploy_stack import CdkFargateDeployStack
 
-# example tests. To run these tests, uncomment this file along with the example
-# resource in cdk_fargate_deploy/cdk_fargate_deploy_stack.py
 @pytest.fixture
 def stack_template():
     app = core.App()
     stack = CdkFargateDeployStack(app, "cdk-fargate-deploy")
     template = assertions.Template.from_stack(stack)
     return template
-
 
 def test_vpc_creation(stack_template):
     """Test if VPC is created with correct properties"""
@@ -58,10 +56,10 @@ def test_target_group_health_check(stack_template):
     stack_template.has_resource("AWS::ElasticLoadBalancingV2::TargetGroup", {
         "Properties": {
             "HealthCheckPath": "/",
-            "HealthCheckIntervalSeconds": 30,
-            "HealthCheckTimeoutSeconds": 5,
-            "HealthyThresholdCount": 5,
-            "UnhealthyThresholdCount": 2,
+            "HealthCheckIntervalSeconds": assertions.Match.number_like(30),
+            "HealthCheckTimeoutSeconds": assertions.Match.number_like(5),
+            "HealthyThresholdCount": assertions.Match.number_like(5),
+            "UnhealthyThresholdCount": assertions.Match.number_like(2),
             "Matcher": {
                 "HttpCode": "200"
             }
