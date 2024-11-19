@@ -2,3 +2,4 @@ aws-cdk-lib==2.166.0
 constructs>=10.0.0,<11.0.0
 fastapi[standard]>=0.113.0,<0.114.0
 pydantic>=2.7.0,<3.0.0
+pytest==8.3.2
