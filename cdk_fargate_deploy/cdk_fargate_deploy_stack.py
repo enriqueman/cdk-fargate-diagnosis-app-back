@@ -31,7 +31,8 @@ class CdkFargateDeployStack(Stack):
             cpu=256,                   
             desired_count=1,            
             task_image_options=ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
-                image=ecs.ContainerImage.from_asset(".")),
+                image=ecs.ContainerImage.from_asset("."),
+                container_port = 80),
             
             memory_limit_mib=512,      
             public_load_balancer=True)  

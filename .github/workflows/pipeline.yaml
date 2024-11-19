@@ -41,13 +41,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           npm install -g aws-cdk
-      # - name: Trigger tests
-      #   run: |
-      #     pytest
+      - name: Trigger tests
+        run: |
+          pytest
 
   deploy-dev:
     if: github.ref == 'refs/heads/develop'
-    # needs: [test]
+    needs: [test]
     runs-on: ubuntu-latest
     env:
       APP_STAGE: dev
