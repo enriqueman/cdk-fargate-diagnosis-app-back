@@ -49,7 +49,7 @@ class CdkFargateDeployStack(Stack):
         
         # VPC Link
         vpc_link  = apigateway.CfnResource(self, "CfnResource",
-            subnet_ids=[subnet.subnet_id for subnet in vpc.private_subnets]
+            targets=[cluster]
         )
         
                
