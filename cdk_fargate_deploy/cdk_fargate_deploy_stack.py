@@ -65,7 +65,7 @@ class CdkFargateDeployStack(Stack):
             connection_id=vpc_link.ref,
             connection_type="VPC_LINK",
             description="API Integration with AWS Fargate Service",
-            integration_method="GET",
+            integration_method="ANY",
             integration_type="HTTP_PROXY",
             integration_uri= service.listener.listener_arn, 
             payload_format_version="1.0"
@@ -74,7 +74,7 @@ class CdkFargateDeployStack(Stack):
         # API Route
         apigwv2.CfnRoute(self, "Route",
             api_id=api.http_api_id,
-            route_key="GET /",
+            route_key="ANY /{proxy+}",
             target=f"integrations/{integration.ref}"
         )
 
