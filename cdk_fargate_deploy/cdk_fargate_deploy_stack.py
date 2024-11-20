@@ -76,7 +76,7 @@ class CdkFargateDeployStack(Stack):
         apigwv2.CfnRoute(self, "Route",
             api_id=api.http_api_id,
             route_key="ANY /{proxy+}",
-            target=f"integrations/{integration.ref}"
+            target=f"/{integration.ref}"
         )
 
         # Output API Gateway URL
