@@ -47,40 +47,56 @@ class CdkFargateDeployStack(Stack):
         )
         
         
-        # VPC Link
-        vpc_link  = apigwv2.CfnVpcLink (self, "HttpVpcLink",
-            name="V2 VPC Link",
-            subnet_ids=[subnet.subnet_id for subnet in vpc.private_subnets]                       
-        )
+        # # VPC Link
+        # vpc_link  = apigwv2.CfnVpcLink (self, "HttpVpcLink",
+        #     name="V2 VPC Link",
+        #     subnet_ids=[subnet.subnet_id for subnet in vpc.private_subnets]                       
+        # )
         
                
-        api = apigwv2.HttpApi(self, "HttpApi",
-            api_name="ApigwFargate",
-            description="Integration between apigw and Application Load-Balanced Fargate Service"
-        )
+        # api = apigwv2.HttpApi(self, "HttpApi",
+        #     api_name="ApigwFargate",
+        #     description="Integration between apigw and Application Load-Balanced Fargate Service"
+        # )
         
-        # API Integration
-        integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
-            api_id=api.http_api_id,
-            connection_id=vpc_link.ref,
-            connection_type="VPC_LINK",
-            description="API Integration with AWS Fargate Service",
-            integration_method="ANY",
-            integration_type="HTTP_PROXY",
-            integration_uri= service.target_group.target_group_arn,
-            payload_format_version="1.0"
-        )
+        # # API Integration
+        # integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
+        #     api_id=api.http_api_id,
+        #     connection_id=vpc_link.ref,
+        #     connection_type="VPC_LINK",
+        #     description="API Integration with AWS Fargate Service",
+        #     integration_method="ANY",
+        #     integration_type="HTTP_PROXY",
+        #     integration_uri= service.target_group.target_group_arn,
+        #     payload_format_version="1.0"
+        # )
         
-         #service.load_balancer.load_balancer_dns_name,
-        # API Route
-        apigwv2.CfnRoute(self, "Route",
-            api_id=api.http_api_id,
-            route_key="ANY /{proxy+}",
-            target=f"integrations/{integration.ref}"
+        #  #service.load_balancer.load_balancer_dns_name,
+        # # API Route
+        # apigwv2.CfnRoute(self, "Route",
+        #     api_id=api.http_api_id,
+        #     route_key="ANY /{proxy+}",
+        #     target=f"integrations/{integration.ref}"
+        # )
+        
+            # Crear un API Gateway HTTP
+        api = apigwv2.HttpApi(self, "MyHttpApi")
+
+        # Integrar el API Gateway con el Load Balancer
+        api.add_routes(
+            path="/{proxy+}",
+            methods=[apigwv2.HttpMethod.ANY],
+            integration=apigwv2_integrations.HttpProxyIntegration(
+                url=f"http://{service.load_balancer.load_balancer_dns_name}/{proxy}",
+                http_method="ANY"
+            )
         )
 
-        # Output API Gateway URL
-        CfnOutput(self, "APIGatewayUrl",
-            description="API Gateway URL to access the GET endpoint",
-            value=api.url
-        )
+        # Salida del API Gateway
+        CfnOutput(self, "ApiEndpoint", value=api.api_endpoint)
+
+        # # Output API Gateway URL
+        # CfnOutput(self, "APIGatewayUrl",
+        #     description="API Gateway URL to access the GET endpoint",
+        #     value=api.url
+        # )
