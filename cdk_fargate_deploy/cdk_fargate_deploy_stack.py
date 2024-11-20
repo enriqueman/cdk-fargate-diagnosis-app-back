@@ -67,10 +67,11 @@ class CdkFargateDeployStack(Stack):
             description="API Integration with AWS Fargate Service",
             integration_method="ANY",
             integration_type="HTTP_PROXY",
-            integration_uri= service.listener.listener_arn, 
+            integration_uri=  service.load_balancer.load_balancer_dns_name;
             payload_format_version="1.0"
         )
         
+         #service.load_balancer.load_balancer_dns_name,
         # API Route
         apigwv2.CfnRoute(self, "Route",
             api_id=api.http_api_id,
