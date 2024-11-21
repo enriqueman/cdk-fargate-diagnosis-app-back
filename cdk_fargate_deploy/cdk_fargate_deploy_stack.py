@@ -73,8 +73,7 @@ class CdkFargateDeployStack(Stack):
         
         integration = integrations.HttpUrlIntegration(
              "FargateIntegration", 
-            url=f"http://{service.load_balancer.load_balancer_dns_name}",
-            vpc_link=vpc_link
+             "http://{service.load_balancer.load_balancer_dns_name}",
         )
         
         
