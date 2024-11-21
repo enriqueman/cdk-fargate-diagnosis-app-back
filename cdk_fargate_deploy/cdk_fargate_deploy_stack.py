@@ -49,7 +49,8 @@ class CdkFargateDeployStack(Stack):
         # VPC Link
         vpc_link  = apigwv2.CfnVpcLink (self, "HttpVpcLink",
             name="V2 VPC Link",
-            subnet_ids=[subnet.subnet_id for subnet in vpc.private_subnets]                       
+            subnet_ids=[subnet.subnet_id for subnet in vpc.private_subnets],
+            security_group_ids=[service.service.connections.security_groups[0].security_group_id]                        
         )
         
                
@@ -60,29 +61,36 @@ class CdkFargateDeployStack(Stack):
         
      
         # API Integration
-        # integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
-        #     api_id=api.http_api_id,
-        #     connection_id=vpc_link.ref,
-        #     connection_type="VPC_LINK",
-        #     description="API Integration with AWS Fargate Service",
-        #     integration_method="ANY",
-        #     integration_type="HTTP_PROXY",
-        #     integration_uri = f"http://{service.load_balancer.load_balancer_dns_name}",
-        #     payload_format_version="1.0"
-        # )
-        
-        integration = integrations.HttpUrlIntegration(
-             "FargateIntegration", 
-             "http://{service.load_balancer.load_balancer_dns_name}",
+        integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
+            api_id=api.http_api_id,
+            connection_id=vpc_link.ref,
+            connection_type="VPC_LINK",
+            description="API Integration with AWS Fargate Service",
+            integration_method="ANY",
+            integration_type="HTTP_PROXY",
+            integration_uri = f"http://{service.load_balancer.load_balancer_dns_name}",
+            payload_format_version="1.0"
         )
+        
         
         
          #service.load_balancer.load_balancer_dns_name,
         # API Route
-        apigwv2.CfnRoute(self, "Route",
+        route = apigwv2.CfnRoute(self, "Route",
             api_id=api.http_api_id,
             route_key="ANY /{proxy+}",
             target=f"integrations/{integration.ref}"
+        )
+        
+        apigwv2.CfnStage(self, "Stage",
+            api_id=api.http_api_id,
+            stage_name="$default",
+            auto_deploy=True,
+            default_route_settings=apigwv2.CfnStage.RouteSettingsProperty(
+                data_trace_enabled=True,
+                logging_level="INFO",
+                detailed_metrics_enabled=True
+            )
         )
 
     
