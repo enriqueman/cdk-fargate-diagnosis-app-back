@@ -9,6 +9,7 @@ from constructs import Construct
 from aws_cdk import (aws_ec2 as ec2, aws_ecs as ecs,
                      aws_ecs_patterns as ecs_patterns,
                      aws_apigatewayv2 as apigwv2,
+                     aws_apigatewayv2_integrations as integrations,
                      )
 
 class CdkFargateDeployStack(Stack):
@@ -59,16 +60,22 @@ class CdkFargateDeployStack(Stack):
         
      
         # API Integration
-        integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
-            api_id=api.http_api_id,
-            connection_id=vpc_link.ref,
-            connection_type="VPC_LINK",
-            description="API Integration with AWS Fargate Service",
-            integration_method="ANY",
-            integration_type="HTTP_PROXY",
-            integration_uri = f"http://{service.load_balancer.load_balancer_dns_name}",
-            payload_format_version="1.0"
+        # integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
+        #     api_id=api.http_api_id,
+        #     connection_id=vpc_link.ref,
+        #     connection_type="VPC_LINK",
+        #     description="API Integration with AWS Fargate Service",
+        #     integration_method="ANY",
+        #     integration_type="HTTP_PROXY",
+        #     integration_uri = f"http://{service.load_balancer.load_balancer_dns_name}",
+        #     payload_format_version="1.0"
+        # )
+        
+        integration = integrations.HttpProxyIntegration(
+            url=f"http://{service.load_balancer.load_balancer_dns_name}",
+            vpc_link=vpc_link
         )
+        
         
          #service.load_balancer.load_balancer_dns_name,
         # API Route
