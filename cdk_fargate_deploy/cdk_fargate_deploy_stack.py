@@ -8,10 +8,7 @@ from aws_cdk import (
 from constructs import Construct
 from aws_cdk import (aws_ec2 as ec2, aws_ecs as ecs,
                      aws_ecs_patterns as ecs_patterns,
-                     aws_apigateway as apigateway,
-                    #  aws_apigatewayv2_integrations as apigwv2,
                      aws_apigatewayv2 as apigwv2,
-                     aws_apigatewayv2_integrations as apigwv2_integrations,
                      )
 
 class CdkFargateDeployStack(Stack):
@@ -68,7 +65,7 @@ class CdkFargateDeployStack(Stack):
             description="API Integration with AWS Fargate Service",
             integration_method="ANY",
             integration_type="HTTP_PROXY",
-            integration_uri= service.load_balancer.listeners[0].listener_arn,
+            # integration_uri= service.load_balancer.listeners[0].listener_arn,
             payload_format_version="1.0"
         )
         
