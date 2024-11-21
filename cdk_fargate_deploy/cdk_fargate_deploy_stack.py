@@ -57,6 +57,7 @@ class CdkFargateDeployStack(Stack):
             description="Integration between apigw and Application Load-Balanced Fargate Service"
         )
         
+     
         # API Integration
         integration = apigwv2.CfnIntegration(self, "HttpApiGatewayIntegration",
             api_id=api.http_api_id,
@@ -66,7 +67,7 @@ class CdkFargateDeployStack(Stack):
             integration_method="ANY",
             integration_type="HTTP_PROXY",
             # integration_uri= service.load_balancer.listeners[0].listener_arn,
-            payload_format_version="1.0"
+            payload_format_version="2.0"
         )
         
          #service.load_balancer.load_balancer_dns_name,
@@ -76,7 +77,7 @@ class CdkFargateDeployStack(Stack):
             route_key="ANY /{proxy+}",
             target=f"integrations/{integration.ref}"
         )
-        
+
     
         # Output API Gateway URL
         CfnOutput(self, "APIGatewayUrl",
