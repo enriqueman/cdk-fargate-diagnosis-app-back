@@ -48,7 +48,7 @@ class CdkFargateDeployStack(Stack):
         
         # VPC Link
         vpc_link  = apigwv2.CfnVpcLink (self, "HttpVpcLink",
-            name="V2 VPC Link",
+            name="V2_VPC_Link",
             subnet_ids=[subnet.subnet_id for subnet in vpc.private_subnets],
             security_group_ids=[service.service.connections.security_groups[0].security_group_id]                        
         )
@@ -68,7 +68,7 @@ class CdkFargateDeployStack(Stack):
             description="API Integration with AWS Fargate Service",
             integration_method="ANY",
             integration_type="HTTP_PROXY",
-            integration_uri = f"http://{service.load_balancer.load_balancer_dns_name}",
+            integration_uri = service.listener.listener_arn,
             payload_format_version="1.0"
         )
         
