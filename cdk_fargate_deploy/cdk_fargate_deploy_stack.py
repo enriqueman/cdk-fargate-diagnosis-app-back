@@ -81,19 +81,7 @@ class CdkFargateDeployStack(Stack):
             route_key="ANY /{proxy+}",
             target=f"integrations/{integration.ref}"
         )
-        
-        # apigwv2.CfnStage(self, "Stage",
-        #     api_id=api.http_api_id,
-        #     stage_name="Apigateway",
-        #     auto_deploy=True,
-        #     default_route_settings=apigwv2.CfnStage.RouteSettingsProperty(
-        #         data_trace_enabled=True,
-        #         logging_level="INFO",
-        #         detailed_metrics_enabled=True
-        #     )
-        # )
-
-    
+            
         # Output API Gateway URL
         CfnOutput(self, "APIGatewayUrl",
             description="API Gateway URL to access the GET endpoint",
