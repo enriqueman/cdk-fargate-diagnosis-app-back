@@ -1,58 +1,77 @@
+# Modelo de Predicción Médica
 
-# Welcome to your CDK Python project!
+Este repositorio contiene una solución para la predicción de diagnósticos médicos basada en síntomas del paciente. La aplicación está compuesta por un backend (API) y un frontend (interfaz web).
 
-This is a blank project for CDK development with Python.
+## Implementación Local
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Para implementar la aplicación de forma local, es necesario desplegar tanto el backend como el frontend en ese orden.
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+### 1. Despliegue del Backend (API)
 
-To manually create a virtualenv on MacOS and Linux:
+#### Construcción de la imagen Docker
 
-```
-$ python -m venv .venv
-```
+1. Ubíquese en la carpeta raíz del proyecto:
+   ```bash
+   cd cdk-fargate-deploy-python-fastapi
+   ```
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+2. Construya la imagen Docker:
+   ```bash
+   docker build -t myimage .
+   ```
 
-```
-$ source .venv/bin/activate
-```
+#### Ejecución del contenedor
 
-If you are a Windows platform, you would activate the virtualenv like this:
+1. Inicie el contenedor:
+   ```bash
+   docker run -d --name mycontainer -p 80:80 myimage
+   ```
 
-```
-% .venv\Scripts\activate.bat
-```
+2. Una vez en ejecución, puede acceder a la documentación de la API en:
+   ```
+   http://127.0.0.1/docs
+   ```
+   Aquí encontrará todos los endpoints disponibles.
 
-Once the virtualenv is activated, you can install the required dependencies.
+### 2. Despliegue del Frontend (Interfaz Web)
 
-```
-$ pip install -r requirements.txt
-```
+#### Construcción de la imagen Docker
 
-At this point you can now synthesize the CloudFormation template for this code.
+1. Construya la imagen Docker del frontend:
+   ```bash
+   docker build --build-arg NEXT_PUBLIC_API_URL=http://127.0.0.1 -t nextjs-app .
+   ```
 
-```
-$ cdk synth
-```
+#### Ejecución del contenedor
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+1. Inicie el contenedor:
+   ```bash
+   docker run -p 8080:80 nextjs-app
+   ```
 
-## Useful commands
+2. Acceda a la interfaz web en:
+   ```
+   http://localhost:8080
+   ```
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+## Uso de la Aplicación
 
-Enjoy!
+### Interfaz Local
+
+1. Abra la aplicación en su navegador: `http://localhost:8080`
+2. Complete el formulario con la información del paciente:
+   - Llene la información básica requerida
+   - Ingrese al menos 5 síntomas
+3. Haga clic en el botón "Generar Predicción" en la parte inferior
+4. Visualice los resultados de la predicción en el panel izquierdo
+
+## Versión en Línea
+
+Si dispone de conexión a internet, puede acceder a la versión desplegada de la aplicación:
+
+### Frontend (Interfaz Web)
+- URL: [https://pwa5h9m5vf.execute-api.us-east-1.amazonaws.com/](https://pwa5h9m5vf.execute-api.us-east-1.amazonaws.com/)
+- Uso: Complete el formulario como se indica en las instrucciones locales
+
+### Backend (API)
+- Documentación de la API: [https://g6ag2ls1c7.execute-api.us-east-1.amazonaws.com/docs#](https://g6ag2ls1c7.execute-api.us-east-1.amazonaws.com/docs#)
