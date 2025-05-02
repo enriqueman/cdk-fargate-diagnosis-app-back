@@ -7,7 +7,7 @@ from cdk_fargate_deploy.cdk_fargate_deploy_stack import CdkFargateDeployStack
 
 
 app = cdk.App()
-CdkFargateDeployStack(app, "CdkFargateDeployStack",
+CdkFargateDeployStack(app, "CdkFargateDeployStackDiagnosisAppBack",
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.
