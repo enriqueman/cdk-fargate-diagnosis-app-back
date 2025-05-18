@@ -20,6 +20,7 @@ Este repositorio implementa un pipeline end-to-end para la detección de enferme
 
 ## Estructura del Repositorio
 
+```
 .
 ├── app/
 │   └── main.py                  # Función principal con el modelo predictivo
@@ -27,9 +28,9 @@ Este repositorio implementa un pipeline end-to-end para la detección de enferme
 │   └── cdk_fargate_deploy_stack.py  # Infraestructura para despliegue en AWS
 ├── app.py                       # Configuración del stack CDK
 ├── Dockerfile                   # Definición para construcción de imagen Docker
-├── docker-compose.yml           # Composición de servicios Docker
-└── requirements.txt             # Dependencias del proyecto
-
+├── docker-compose.yml          # Composición de servicios Docker
+└── requirements.txt            # Dependencias del proyecto
+```
 
 ### Componentes Principales
 
