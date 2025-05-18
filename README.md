@@ -1,3 +1,66 @@
+# Sistema Predictivo para Detección de Enfermedades
+
+## Problema
+
+El diagnóstico oportuno de enfermedades, tanto comunes como huérfanas (raras), presenta desafíos considerables para los profesionales médicos debido a:
+
+- Desbalance extremo en la disponibilidad de datos (miles de casos para enfermedades comunes vs. decenas para huérfanas)
+- Variabilidad geográfica de síntomas según factores demográficos y ambientales
+- Inconsistencias en la terminología médica y datos faltantes en registros clínicos
+- Necesidad de alta precisión y baja latencia para entornos clínicos críticos
+
+## Propósito
+
+Este repositorio implementa un pipeline end-to-end para la detección de enfermedades comunes y huérfanas mediante modelos predictivos avanzados, con el objetivo de:
+
+- Facilitar el diagnóstico médico con predicciones rápidas y explicables
+- Mejorar los índices de salud pública a través de detección temprana
+- Ofrecer un sistema que cumpla con normativas éticas y regulatorias de datos médicos
+- Proporcionar una solución escalable y adaptable a diferentes entornos clínicos
+
+## Estructura del Repositorio
+
+.
+├── app/
+│   └── main.py                  # Función principal con el modelo predictivo
+├── cdk_fargate_deploy/
+│   └── cdk_fargate_deploy_stack.py  # Infraestructura para despliegue en AWS
+├── app.py                       # Configuración del stack CDK
+├── Dockerfile                   # Definición para construcción de imagen Docker
+├── docker-compose.yml           # Composición de servicios Docker
+└── requirements.txt             # Dependencias del proyecto
+
+
+### Componentes Principales
+
+- **main.py**: Contiene la implementación del modelo predictivo híbrido:
+  - Modelo para enfermedades comunes (ensamblaje Random Forest + XGBoost)
+  - Modelo para enfermedades huérfanas (Few-shot learning con Transformers)
+  - Lógica de preprocesamiento de datos y predicción
+
+- **cdk_fargate_deploy_stack.py**: Define la infraestructura como código para AWS:
+  - Configuración de servicios ECS Fargate
+  - Implementación de API Gateway
+  - Configuración de bases de datos y almacenamiento
+  - Mecanismos de seguridad y monitoreo
+
+- **app.py**: Inicializa y configura el stack CDK para despliegue
+
+- **Dockerfile** y **docker-compose.yml**: Permiten la construcción y orquestación de la imagen Docker para entornos de desarrollo y producción
+
+## Despliegue
+
+El sistema está diseñado para desplegarse en AWS utilizando:
+- Frontend: Next.js en S3 (repositorio separado)
+- Backend: API REST (FastAPI) en ECS Fargate
+- Almacenamiento: PostgreSQL (RDS) y DynamoDB
+
+## Repositorios Relacionados
+
+- Frontend: [enriqueman/cdk-fargate-diagnosis-app-nextjs](https://github.com/enriqueman/cdk-fargate-diagnosis-app-nextjs)
+- Backend: [enriqueman/cdk-fargate-diagnosis-app-back](https://github.com/enriqueman/cdk-fargate-diagnosis-app-back)
+
+
 # Modelo de Predicción Médica
 
 Este repositorio contiene una solución para la predicción de diagnósticos médicos basada en síntomas del paciente. La aplicación está compuesta por un backend (API) y un frontend (interfaz web).
