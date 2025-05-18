@@ -3,6 +3,9 @@ from pydantic import BaseModel
 from typing import Optional, List, Union
 import random
 from fastapi.middleware.cors import CORSMiddleware
+import json
+from datetime import datetime
+import os
 
 app = FastAPI(
     title="API de Diagnóstico Médico",
@@ -18,6 +21,72 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Archivos para almacenar estadísticas
+STATS_FILE = "stats.json"
+PREDICTION_LOG = "prediction_log.txt"
+
+# Inicializar archivo de estadísticas si no existe
+if not os.path.exists(STATS_FILE):
+    with open(STATS_FILE, "w") as f:
+        initial_stats = {
+            "category_counts": {
+                "NO ENFERMO": 0,
+                "ENFERMEDAD LEVE": 0,
+                "ENFERMEDAD AGUDA": 0,
+                "ENFERMEDAD CRÓNICA": 0,
+                "ENFERMEDAD TERMINAL": 0
+            },
+            "last_predictions": [],
+            "last_date": None
+        }
+        json.dump(initial_stats, f)
+
+def update_prediction_stats(diagnosis: str):
+    # Actualizar estadísticas
+    with open(STATS_FILE, "r+") as f:
+        stats = json.load(f)
+        
+        # Actualizar conteos
+        stats["category_counts"][diagnosis] += 1
+        
+        # Actualizar últimas predicciones
+        stats["last_predictions"].append({
+            "diagnosis": diagnosis,
+            "timestamp": datetime.now().isoformat()
+        })
+        # Mantener solo las últimas 5
+        stats["last_predictions"] = stats["last_predictions"][-5:]
+        
+        # Actualizar última fecha
+        stats["last_date"] = datetime.now().isoformat()
+        
+        # Guardar cambios
+        f.seek(0)
+        json.dump(stats, f)
+        f.truncate()
+
+def log_prediction(request_data: dict, diagnosis: str):
+    # Registrar predicción en archivo de texto
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "patient_id": request_data.datos_personales.patientId,
+        "patient_name": request_data.datos_personales.patientName,
+        "age": request_data.datos_personales.age,
+        "diagnosis": diagnosis,
+        "symptoms": [s.nombre for s in request_data.sintomas_principales],
+        "risk_factors": {
+            "smoking": request_data.habitos.smoking,
+            "alcohol": request_data.habitos.alcohol,
+            "drugs": request_data.habitos.drugs
+        }
+    }
+    
+    with open(PREDICTION_LOG, "a") as f:
+        f.write(json.dumps(log_entry) + "\n")
+
+
+
 
 class HabitosModel(BaseModel):
     smoking: bool = False
@@ -151,6 +220,9 @@ def predict_diagnosis(request: DiagnosisRequestModel):
                 severidad = 2
                 riesgo = "Medio-Alto"
         
+        update_prediction_stats(diagnosis)
+        log_prediction(request, diagnosis)
+
         # Generamos respuesta
         return DiagnosisResponseModel(
             patientId=request.datos_personales.patientId,
@@ -225,6 +297,19 @@ def simplified_diagnosis(request: dict):
             elif diagnosis == "ENFERMEDAD LEVE":
                 diagnosis = "ENFERMEDAD AGUDA"
         
+        # Nuevo: Actualizar estadísticas
+        with open(STATS_FILE, "r+") as f:
+            stats = json.load(f)
+            stats["category_counts"][diagnosis] += 1
+            stats["last_predictions"].append({
+                "diagnosis": diagnosis,
+                "timestamp": datetime.now().isoformat()
+            })
+            stats["last_predictions"] = stats["last_predictions"][-5:]
+            stats["last_date"] = datetime.now().isoformat()
+            f.seek(0)
+            json.dump(stats, f)
+            f.truncate()
         return {
             "diagnosis": diagnosis,
             "riskScore": total_risk_score,
@@ -234,5 +319,29 @@ def simplified_diagnosis(request: dict):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error en el diagnóstico simplificado: {str(e)}")
+
+
+# Nuevo endpoint para reportes
+@app.get("/api/report")
+def get_report():
+    try:
+        # Leer estadísticas
+        with open(STATS_FILE, "r") as f:
+            stats = json.load(f)
+        
+        # Leer últimas predicciones del log
+        last_predictions = []
+        if os.path.exists(PREDICTION_LOG):
+            with open(PREDICTION_LOG, "r") as f:
+                lines = f.readlines()[-5:]  # Últimas 5 líneas
+                last_predictions = [json.loads(line) for line in lines]
+        
+        return {
+            "category_counts": stats["category_counts"],
+            "last_predictions": last_predictions,
+            "last_prediction_date": stats["last_date"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Para ejecutar: uvicorn src.api.medical_diagnosis_api:app --reload
