@@ -7,10 +7,14 @@ on:
       - 'develop'
       - 'master'
       - 'feature**'
+      - 'main'
 
   delete:
     branches:
       - 'feature**'
+  pull_request:
+    branches:
+      - main
 
 
 env:
@@ -84,3 +88,49 @@ jobs:
       - name: Deploy to AWS
         run: |
           cdk deploy --app="python3 ${PWD}/app.py" --require-approval=never
+
+  ci-cd:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install fastapi uvicorn pytest httpx
+
+    # Solo para PRs: Comentario inicial
+    - name: PR Start Comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: "CI/CD en acción. Ejecutando tareas..."
+          })
+
+    - name: Run Tests
+      run: pytest tests/ -v
+
+    # Solo para PRs: Comentario de éxito
+    - name: PR Success Comment
+      if: github.event_name == 'pull_request' && success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: "CI/CD terminado con éxito."
+          })
