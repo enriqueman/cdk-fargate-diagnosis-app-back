@@ -126,11 +126,16 @@ def predict_diagnosis(request: DiagnosisRequestModel):
             recomendaciones = "Requiere atención médica inmediata. Posible tratamiento con antibióticos."
             severidad = 2
             riesgo = "Medio-Alto"
-        else:
+        elif total_risk_score <= 24:
             diagnosis = "ENFERMEDAD CRÓNICA"
             recomendaciones = "Requiere atención médica especializada y seguimiento continuo."
             severidad = 3
             riesgo = "Alto"
+        else:
+            diagnosis = "ENFERMEDAD TERMINAL"
+            recomendaciones = "Cuidados paliativos y atención especializada requerida."
+            severidad = 4
+            riesgo = "Muy Alto"
         
         # Verificamos síntomas críticos que podrían elevar inmediatamente el diagnóstico
         if (secundarios.bloodInUrine or secundarios.bloodInStool) and secundarios.fever:
@@ -208,8 +213,10 @@ def simplified_diagnosis(request: dict):
             diagnosis = "ENFERMEDAD LEVE"
         elif total_risk_score <= 18:
             diagnosis = "ENFERMEDAD AGUDA"
-        else:
+        elif total_risk_score <= 24:
             diagnosis = "ENFERMEDAD CRÓNICA"
+        else:
+            diagnosis = "ENFERMEDAD TERMINAL"
         
         # Verificar síntomas críticos 
         if (request.get("bloodInUrine", False) or request.get("bloodInStool", False)) and request.get("fever", False):
