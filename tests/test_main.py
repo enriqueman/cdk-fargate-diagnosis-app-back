@@ -58,9 +58,9 @@ def test_no_enfermo_diagnosis(client):
     "height": 0
   },
   "habitos": {
-    "smoking": true,
-    "alcohol": true,
-    "drugs": true
+    "smoking": True,
+    "alcohol": True,
+    "drugs": True
   },
   "sintomas_principales": [
     {
@@ -69,20 +69,20 @@ def test_no_enfermo_diagnosis(client):
     }
   ],
   "sintomas_secundarios": {
-    "fever": true,
-    "rash": true,
-    "cough": true,
-    "skinEruptions": true,
-    "nightSweats": true,
-    "bloodInUrine": true,
-    "bloodInStool": true,
-    "constipation": false,
-    "nausea": false,
-    "headache": false,
-    "abdominalPain": false,
-    "insomnia": false,
-    "fatigue": true,
-    "diarrhea": false,
+    "fever": True,
+    "rash": True,
+    "cough": True,
+    "skinEruptions": True,
+    "nightSweats": True,
+    "bloodInUrine": True,
+    "bloodInStool": True,
+    "constipation": False,
+    "nausea": False,
+    "headache": False,
+    "abdominalPain": False,
+    "insomnia": False,
+    "fatigue": True,
+    "diarrhea": False,
     "additionalSymptoms": ""
   }
 }
@@ -106,9 +106,9 @@ def test_critical_symptoms_escalation(client):
         "height": 0
     },
     "habitos": {
-        "smoking": false,
-        "alcohol": false,
-        "drugs": false
+        "smoking": False,
+        "alcohol": False,
+        "drugs": False
     },
     "sintomas_principales": [
         {
@@ -117,20 +117,20 @@ def test_critical_symptoms_escalation(client):
         }
     ],
     "sintomas_secundarios": {
-        "fever": false,
-        "rash": false,
-        "cough": false,
-        "skinEruptions": false,
-        "nightSweats": false,
-        "bloodInUrine": false,
-        "bloodInStool": false,
-        "constipation": false,
-        "nausea": false,
-        "headache": false,
-        "abdominalPain": false,
-        "insomnia": false,
-        "fatigue": false,
-        "diarrhea": false,
+        "fever": False,
+        "rash": False,
+        "cough": False,
+        "skinEruptions": False,
+        "nightSweats": False,
+        "bloodInUrine": False,
+        "bloodInStool": False,
+        "constipation": False,
+        "nausea": False,
+        "headache": False,
+        "abdominalPain": False,
+        "insomnia": False,
+        "fatigue": False,
+        "diarrhea": False,
         "additionalSymptoms": ""
     }
     }
