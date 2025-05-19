@@ -171,22 +171,7 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: pytest tests/ -v
-
-      # Nuevos pasos para construir y publicar la imagen Docker
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:main
-            ghcr.io/${{ github.repository }}:latest
-          labels: |
-            org.opencontainers.image.source=${{ github.repository_url }}
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
+    
       # Pasos existentes para el despliegue en AWS
       - name: Set up Node
         uses: actions/setup-node@v3
