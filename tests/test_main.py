@@ -145,8 +145,8 @@ def test_all_categories(client):
         ({"severidad": 1, "sintomas": 0}, "NO ENFERMO"),
         ({"severidad": 3, "sintomas": 5}, "ENFERMEDAD LEVE"),
         ({"severidad": 4, "sintomas": 8}, "ENFERMEDAD AGUDA"),
-        ({"severidad": 5, "sintomas": 10}, "ENFERMEDAD CRÓNICA"),
-        ({"severidad": 5, "sintomas": 15}, "ENFERMEDAD TERMINAL")
+        ({"severidad": 5, "sintomas": 14}, "ENFERMEDAD CRÓNICA"),  # 5 + 3 + 14 = 22
+        ({"severidad": 5, "sintomas": 14, "additional_principales": 5}, "ENFERMEDAD TERMINAL")  # 10 (5+5) + 3 +14=27
     ]
     
     sintomas_keys = [
@@ -156,7 +156,15 @@ def test_all_categories(client):
     ]
 
     for case in test_cases:
-        num_sintomas = case[0]["sintomas"]
+        num_sintomas = case[0].get("sintomas", 0)
+        # Manejar sintomas_principales adicionales
+        num_principales = case[0].get("additional_principales", 0)
+        severidad_principal = case[0]["severidad"]
+        sintomas_principales = [
+            {"nombre": f"Síntoma {i}", "severidad": severidad_principal} 
+            for i in range(1 + num_principales)
+        ]
+        
         payload = {
             "datos_personales": {
                 "patientId": "3",
@@ -171,9 +179,7 @@ def test_all_categories(client):
                 "alcohol": True,
                 "drugs": True
             },
-            "sintomas_principales": [
-                {"nombre": "Síntoma", "severidad": case[0]["severidad"]}
-            ],
+            "sintomas_principales": sintomas_principales,
             "sintomas_secundarios": {
                 **{k: True for k in sintomas_keys[:num_sintomas]},
                 **{k: False for k in sintomas_keys[num_sintomas:]},
