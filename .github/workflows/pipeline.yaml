@@ -149,7 +149,7 @@ jobs:
   
   deploy-main:
     if: github.ref == 'refs/heads/main'
-    needs: [test, ci-cd]
+    needs: [ci-cd]
     runs-on: ubuntu-latest
     env:
       APP_STAGE: prod
