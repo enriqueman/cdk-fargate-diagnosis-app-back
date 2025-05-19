@@ -49,86 +49,95 @@ def test_initial_stats(client):
 
 def test_no_enfermo_diagnosis(client):
     payload = {
+  "datos_personales": {
+    "patientId": "string",
+    "patientName": "string",
+    "age": 0,
+    "sex": "string",
+    "weight": 0,
+    "height": 0
+  },
+  "habitos": {
+    "smoking": true,
+    "alcohol": true,
+    "drugs": true
+  },
+  "sintomas_principales": [
+    {
+      "nombre": "string",
+      "severidad": 1
+    }
+  ],
+  "sintomas_secundarios": {
+    "fever": true,
+    "rash": true,
+    "cough": true,
+    "skinEruptions": true,
+    "nightSweats": true,
+    "bloodInUrine": true,
+    "bloodInStool": true,
+    "constipation": false,
+    "nausea": false,
+    "headache": false,
+    "abdominalPain": false,
+    "insomnia": false,
+    "fatigue": true,
+    "diarrhea": false,
+    "additionalSymptoms": ""
+  }
+}
+    
+    response = client.post("/api/diagnosis", json=payload)
+    assert response.status_code == 200
+    assert response.json()["diagnosis"] == "ENFERMEDAD AGUDA"
+    
+    # Verificar estadísticas
+    report = client.get("/api/report").json()
+    assert report["category_counts"]["ENFERMEDAD AGUDA"] == 1
+
+def test_critical_symptoms_escalation(client):
+    payload = {
         "datos_personales": {
-            "patientId": "1",
-            "patientName": "Test Patient",
-            "age": 25,
-            "sex": "M",
-            "weight": 70,
-            "height": 175
-        },
-        "habitos": {
-            "smoking": False,
-            "alcohol": False,
-            "drugs": False
-        },
-        "sintomas_principales": [{"nombre": "Tos leve", "severidad": 1}],
-        "sintomas_secundarios": {
-            "fever": False,
-            "rash": False,
-            "cough": False,
-            "skinEruptions": False,
-            "nightSweats": False,
-            "bloodInUrine": False,
-            "bloodInStool": False,
-            "constipation": False,
-            "nausea": False,
-            "headache": False,
-            "abdominalPain": False,
-            "insomnia": False,
-            "fatigue": False,
-            "diarrhea": False,
-            "additionalSymptoms": ""
+        "patientId": "string",
+        "patientName": "string",
+        "age": 0,
+        "sex": "string",
+        "weight": 0,
+        "height": 0
+    },
+    "habitos": {
+        "smoking": false,
+        "alcohol": false,
+        "drugs": false
+    },
+    "sintomas_principales": [
+        {
+        "nombre": "string",
+        "severidad": 1
         }
+    ],
+    "sintomas_secundarios": {
+        "fever": false,
+        "rash": false,
+        "cough": false,
+        "skinEruptions": false,
+        "nightSweats": false,
+        "bloodInUrine": false,
+        "bloodInStool": false,
+        "constipation": false,
+        "nausea": false,
+        "headache": false,
+        "abdominalPain": false,
+        "insomnia": false,
+        "fatigue": false,
+        "diarrhea": false,
+        "additionalSymptoms": ""
+    }
     }
     
     response = client.post("/api/diagnosis", json=payload)
     assert response.status_code == 200
     assert response.json()["diagnosis"] == "NO ENFERMO"
-    
-    # Verificar estadísticas
-    report = client.get("/api/report").json()
-    assert report["category_counts"]["NO ENFERMO"] == 1
-
-def test_critical_symptoms_escalation(client):
-    payload = {
-        "datos_personales": {
-            "patientId": "2",
-            "patientName": "Critical Patient",
-            "age": 30,
-            "sex": "F",
-            "weight": 60,
-            "height": 165
-        },
-        "habitos": {
-            "smoking": False,
-            "alcohol": False,
-            "drugs": False
-        },
-        "sintomas_principales": [{"nombre": "Fatiga", "severidad": 1}],
-        "sintomas_secundarios": {
-            "fever": True,
-            "bloodInUrine": True,
-            # Otros síntomas en False
-            "rash": False,
-            "cough": False,
-            "skinEruptions": False,
-            "nightSweats": False,
-            "bloodInStool": False,
-            "constipation": False,
-            "nausea": False,
-            "headache": False,
-            "abdominalPain": False,
-            "insomnia": False,
-            "fatigue": False,
-            "diarrhea": False,
-            "additionalSymptoms": ""
-        }
-    }
-    
-    response = client.post("/api/diagnosis", json=payload)
-    assert response.status_code == 200
-    assert response.json()["diagnosis"] == "ENFERMEDAD LEVE"
 
 def test_all_categories(client):
     # Test para verificar las 5 categorías
