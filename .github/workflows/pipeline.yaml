@@ -147,7 +147,7 @@ jobs:
 
 
   
-    deploy-main:
+  deploy-main:
     if: github.ref == 'refs/heads/main'
     needs: [test, ci-cd]
     runs-on: ubuntu-latest
