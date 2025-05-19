@@ -149,7 +149,14 @@ def test_all_categories(client):
         ({"severidad": 5, "sintomas": 15}, "ENFERMEDAD TERMINAL")
     ]
     
+    sintomas_keys = [
+        "fever", "rash", "cough", "skinEruptions", "nightSweats",
+        "bloodInUrine", "bloodInStool", "constipation", "nausea",
+        "headache", "abdominalPain", "insomnia", "fatigue", "diarrhea"
+    ]
+
     for case in test_cases:
+        num_sintomas = case[0]["sintomas"]
         payload = {
             "datos_personales": {
                 "patientId": "3",
@@ -168,9 +175,9 @@ def test_all_categories(client):
                 {"nombre": "Síntoma", "severidad": case[0]["severidad"]}
             ],
             "sintomas_secundarios": {
-                "fever": False,
-                # Configurar síntomas según el caso
-                **{k: True for k in list(app.schema()["components"]["schemas"]["SintomasSecundariosModel"]["properties"].keys())[:case[0]["sintomas"]]}
+                **{k: True for k in sintomas_keys[:num_sintomas]},
+                **{k: False for k in sintomas_keys[num_sintomas:]},
+                "additionalSymptoms": ""
             }
         }
         
