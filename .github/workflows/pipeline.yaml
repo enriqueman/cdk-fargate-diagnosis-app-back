@@ -154,47 +154,40 @@ jobs:
     env:
       APP_STAGE: prod
     steps:
-
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install fastapi uvicorn pytest httpx
-          pip install .
-
-      # Usar el token con los permisos correctos
-      - name: PR Start Comment
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "CI/CD en acción. Ejecutando tareas..."
-            })
+          pip install -r requirements.txt
 
       - name: Run Tests
         env:
-          PYTHONPATH: ${{ github.workspace }} 
+          PYTHONPATH: ${{ github.workspace }}
         run: pytest tests/ -v
 
-      
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+      # Nuevos pasos para construir y publicar la imagen Docker
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
         with:
-          python-version: "3.10"
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:main
+            ghcr.io/${{ github.repository }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.repository_url }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Pasos existentes para el despliegue en AWS
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
