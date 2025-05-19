@@ -11,7 +11,7 @@ def client(tmp_path):
     log_file = tmp_path / "prediction_log.txt"
     
     # Monkey patching de las rutas de archivo
-    from main import STATS_FILE, PREDICTION_LOG
+    from app.main import STATS_FILE, PREDICTION_LOG
     STATS_FILE = str(stats_file)
     PREDICTION_LOG = str(log_file)
     
