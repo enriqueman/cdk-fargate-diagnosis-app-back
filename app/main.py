@@ -177,7 +177,7 @@ def predict_diagnosis(request: DiagnosisRequestModel):
         if secundarios.diarrhea: symptom_count += 1
         
         # Calcula puntuación total de riesgo
-        total_risk_score = primary_severity + risk_factors + min(10, symptom_count)
+        total_risk_score = primary_severity + risk_factors + symptom_count
         
         # Determinamos el diagnóstico basado en la puntuación total
         if total_risk_score <= 6:
