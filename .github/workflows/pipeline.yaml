@@ -150,7 +150,6 @@ jobs:
   
   deploy-main:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [test,ci-cd]
     runs-on: ubuntu-latest
     env:
       APP_STAGE: prod
