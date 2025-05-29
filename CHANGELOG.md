@@ -1,6 +1,6 @@
 # CHANGELOG - Pipeline End-to-End para Detección de Enfermedades
 
-## [Versión 2.0] - Semana 2 (Versión Actual)
+## [Versión 2.0] - Semana 5-6 (Versión Actual)
 
 ### 🆕 **NUEVAS FUNCIONALIDADES**
 
@@ -112,4 +112,4 @@
 
 
 **Autor**: Enrique Manzano  
-**Última actualización**: Semana 2
+**Última actualización**: Semana 5-6
