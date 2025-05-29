@@ -106,5 +106,10 @@
 
 ---
 
+## **Pipeline Actual**
+
+![Pipeline End-to-End para Detección de Enfermedades Comunes y Huérfanas](Pipeline%20End-to-End%20para%20Detección%20de%20Enfermedades%20Comunes%20y%20Huérfanas.png)
+
+
 **Autor**: Enrique Manzano  
 **Última actualización**: Semana 2
